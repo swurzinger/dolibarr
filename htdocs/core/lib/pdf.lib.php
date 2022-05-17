@@ -633,6 +633,8 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			}
 
+			$stringaddress .= "\n";
+
 			// Intra VAT
 			if (empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS)) {
 				if ($targetcompany->tva_intra) {
@@ -822,7 +824,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if (empty($onlynumber)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
-		$cury += 4;
+		$cury += 5;
 	}
 
 	$outputlangs->load("banks");
@@ -901,15 +903,15 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			$cury += 8;
 		}
 	} else {
-		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
+		$pdf->SetFont('', '', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Bank").': '.$outputlangs->convToOutputCharset($account->bank), 0, 'L', 0);
 		$cury += 3;
 
-		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': '.$outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
-		$cury += 3;
+//		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
+//		$pdf->SetXY($curx, $cury);
+//		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("BankAccountNumber").': '.$outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
+//		$cury += 3;
 
 		if ($diffsizecontent <= 2) {
 			$cury += 1;
@@ -938,6 +940,8 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$cury += 1;
 	}
 
+	$cury += 1;
+
 	// Use correct name of bank id according to country
 	$ibankey = FormBank::getIBANLabel($account);
 
@@ -954,14 +958,14 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			}
 		}
 
-		$pdf->SetFont('', 'B', $default_font_size - 3);
+		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': '.$ibanDisplay, 0, 'L', 0);
-		$cury += 3;
+		$cury += 4;
 	}
 
 	if (!empty($account->bic)) {
-		$pdf->SetFont('', 'B', $default_font_size - 3);
+		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 	}
@@ -1023,7 +1027,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	if ($showdetails == 1 || $showdetails == 3) {
 		// Company name
 		if ($fromcompany->name) {
-			$line1 .= ($line1 ? " - " : "").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
+			//TODO: stw
+			// $line1 .= ($line1 ? " - " : "").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
+			$line1 .= ($line1 ? " - " : "").$fromcompany->name;
 		}
 		// Address
 		if ($fromcompany->address) {
