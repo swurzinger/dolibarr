@@ -139,6 +139,7 @@ ProfId1AT=Steuernummer (Finanzamt)
 ProfId2AT=Gerichtsstand
 ProfId3AT=Firmenbuchnummer
 ProfId5AT=EORI Nummer
+ProfId6AT=ZVR-Nummer
 ProfId1AU=Prof ID 1
 ProfId1BE=Prof ID 1
 ProfId5BE=EORI-Nummer
