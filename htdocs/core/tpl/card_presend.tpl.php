@@ -311,6 +311,12 @@ if ($action == 'presend') {
 	$formmail->withdeliveryreceipt = 1;
 	$formmail->withcancel = 1;
 
+	if (is_array($liste) && count($liste) > 0) {
+		foreach ($liste as $key => $toEntry) {
+			$substitutionarray['__TO_RECIPIENT_'.$key.'__'] = $toEntry;
+		}
+	}
+
 	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 

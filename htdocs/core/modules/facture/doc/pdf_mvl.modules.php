@@ -1212,6 +1212,12 @@ class pdf_mvl extends ModelePDFFactures
 		}
 
 		if ($object->type != 2) {
+
+			// TODO: stw
+			// Bereits bezahlt
+			$paidOn = $this->getExtrafieldContent($object, "paid_on");
+
+
 			// Check a payment mode is defined
 			if (empty($object->mode_reglement_code)
 				&& empty($conf->global->FACTURE_CHQ_NUMBER)
@@ -1234,14 +1240,14 @@ class pdf_mvl extends ModelePDFFactures
 
 				// Show payment mode
 			if (!empty($object->mode_reglement_code)
-					&& $object->mode_reglement_code != 'CHQ'
-					&& $object->mode_reglement_code != 'VIR') {
-					$pdf->SetFont('', 'B', $default_font_size - 2);
+					&& ($object->mode_reglement_code != 'CHQ'
+					&& $object->mode_reglement_code != 'VIR' || !empty($paidOn))) {
+					$pdf->SetFont('', 'B', $default_font_size - 1);
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$titre = $outputlangs->transnoentities("PaymentMode").':';
 					$pdf->MultiCell($posxend - $this->marge_gauche, 5, $titre, 0, 'L');
 
-					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->SetXY($posxval, $posy);
 					$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
 					$pdf->MultiCell($posxend - $posxval, 5, $lib_mode_reg, 0, 'L');
@@ -1319,7 +1325,7 @@ class pdf_mvl extends ModelePDFFactures
 			}
 
 					// If payment mode not forced or forced to VIR, show payment with BAN
-			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
+			if (empty($paidOn) && (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')) {
 				if ($object->fk_account > 0 || $object->fk_bank > 0 || !empty($conf->global->FACTURE_RIB_NUMBER)) {
 					$bankid = ($object->fk_account <= 0 ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
 					if ($object->fk_bank > 0) {
@@ -1335,6 +1341,15 @@ class pdf_mvl extends ModelePDFFactures
 
 					$posy += 2;
 				}
+			}
+
+			if (!empty($paidOn)) {
+				$pdf->SetXY($this->marge_gauche, $posy + 1);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$title = "Betrag dankend erhalten am ";
+				$pdf->MultiCell($posxend - $this->marge_gauche, 3, $title . $paidOn, 0, 'L');
+				$posy = $pdf->GetY() + 1;
 			}
 		}
 
