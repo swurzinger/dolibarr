@@ -653,6 +653,8 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 			}
 
+			// $stringaddress .= "\n";
+
 			// Intra VAT
 			if (!getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
 				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
@@ -873,7 +875,8 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 	if (empty($onlynumber)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', false);
-		$cury += 4;
+		// TODO: stw, increase vertical space
+		$cury += 4 + 1;
 	}
 
 	$outputlangs->load("banks");
@@ -996,6 +999,9 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 		$cury += 1;
 	}
 
+	// TODO: stw, increase vspace
+	$cury += 1;
+
 	// Use correct name of bank id according to country
 	$ibankey = FormBank::getIBANLabel($account);
 
@@ -1012,14 +1018,17 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 			}
 		}
 
-		$pdf->SetFont('', 'B', $default_font_size - 3);
+		// TODO: stw, increase IBAN font size
+		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': '.$ibanDisplay, 0, 'L', false);
-		$cury += 3;
+		// TODO: stw, increase vspace
+		$cury += 3 + 1;
 	}
 
 	if (!empty($account->bic)) {
-		$pdf->SetFont('', 'B', $default_font_size - 3);
+		// TODO: stw, increase BIC font size
+		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': '.$outputlangs->convToOutputCharset($account->bic), 0, 'L', false);
 	}
@@ -1084,7 +1093,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	if (is_object($fromcompany) && in_array($showdetails, array(1, 3))) {
 		// Company name
 		if ($fromcompany->name) {
-			$line1 .= ($line1 ? " - " : "").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
+			//TODO: stw, remove "Firmensitz: " prefix
+			// $line1 .= ($line1 ? " - " : "").$outputlangs->transnoentities("RegisteredOffice").": ".$fromcompany->name;
+			$line1 .= ($line1 ? " - " : "").$fromcompany->name;
 		}
 		// Address
 		if ($fromcompany->address) {
